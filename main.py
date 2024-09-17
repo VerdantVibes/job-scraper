@@ -1,5 +1,8 @@
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
+import smtplib
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email import encoders
 from bs4 import BeautifulSoup
 import pandas as pd
 import time
@@ -89,3 +92,26 @@ df.sort_values(by=["Date_new", "Salary"], inplace=True)
 
 df = df[["Link", "Job Title", "Company", "Location", "Salary", "Date"]]
 df.to_csv("~/Scraped-Data/indeed_scraped_data.csv")
+
+# Input the email account that will send the email and who will receiving it
+sender = "me@gmail.com"
+receiver = "receiver@gmail.com"
+
+# Creates the Message, Subject line, From and To
+msg = MIMEMultipart()
+msg["Subject"] = "New Job appeared"
+msg["From"] = sender
+msg["To"] = ",".join(receiver)
+
+# Adds a csv file as an attachment to the email (new_jobs.csv is our attahced csv in this case)
+part = MIMEBase("application", "octet-stream")
+part.set_payload(open("A/File/Path/new_jobs.csv", "rb").read())
+encoders.encode_base64(part)
+part.add_header("Content-Disposition", 'attachment; filename ="new_jobs.csv"')
+msg.attach(part)
+
+# Will login to your email and actually send the message above to the receiver
+s = smtplib.SMTP_SSL(host="smtp.gmail.com", port=465)
+s.login(user="me@gmail.com", password="input my password")
+s.sendmail(sender, receiver, msg.as_string())
+s.quit()
