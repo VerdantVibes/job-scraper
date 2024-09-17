@@ -50,19 +50,7 @@ while True:
             ).text.strip()
         except:
             location = "N/A"
-        date = post.find("span", class_="date").text.strip()
         try:
             salary = post.find("span", class_="salaryText").text.strip()
         except:
             salary = "N/A"
-        df = df.append(
-            {
-                "Link": link_full,
-                "Job Title": name,
-                "Company": company,
-                "Location": location,
-                "Salary": salary,
-                "Date": date,
-            },
-            ignore_index=True,
-        )
